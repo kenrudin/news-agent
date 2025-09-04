@@ -1,4 +1,4 @@
-# Personalized News Agent - Product Requirements Document
+# Personalized News Agent - Product Requirements Document 
 
 ## Product Vision
 Create an intelligent AI-powered news agent that delivers personalized, comprehensive news summaries tailored to individual user preferences, interests, and consumption patterns.
