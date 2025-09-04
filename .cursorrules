@@ -1,0 +1,268 @@
+# AI Trip Planner - Cursor Rules
+
+## Project Overview
+This is an AI-powered trip planning application with:
+- **Backend**: FastAPI + LangGraph for AI orchestration
+- **Frontend**: Modern HTML with Tailwind CSS
+- **AI**: OpenAI/OpenRouter integration with optional Arize tracing
+- **Deployment**: Docker + Render support
+
+## Code Style & Standards
+
+### Python (Backend)
+- Use **type hints** for all function parameters and return values
+- Follow **PEP 8** style guidelines
+- Use **Pydantic models** for API request/response validation
+- Prefer **async/await** for I/O operations
+- Use **f-strings** for string formatting
+- Keep functions focused and under 50 lines when possible
+- Use **docstrings** for all public functions and classes
+
+### Frontend (HTML/JS)
+- Use **semantic HTML5** elements
+- Follow **Tailwind CSS** utility-first approach
+- Use **modern JavaScript** (ES6+) features
+- Keep JavaScript functions small and focused
+- Use **const/let** instead of var
+- Prefer **template literals** for string concatenation
+
+### API Design
+- Follow **RESTful** conventions
+- Use **HTTP status codes** appropriately
+- Include **error handling** with meaningful messages
+- Use **Pydantic models** for request/response schemas
+- Keep endpoints focused and single-purpose
+
+## Architecture Patterns
+
+### LangGraph Agents
+- Each agent should have a **single responsibility**
+- Use **typed state** with TypedDict for agent state management
+- Keep agent functions **pure** and testable
+- Use **tool binding** for external data access
+- Implement **proper error handling** in agent workflows
+
+### Tool Development
+- Tools should be **deterministic** and **idempotent**
+- Use **descriptive docstrings** for tool functions
+- Keep tools **focused** on single data sources
+- Return **structured data** when possible
+- Handle **edge cases** gracefully
+
+### State Management
+- Use **TypedDict** for state definitions
+- Keep state **immutable** where possible
+- Use **operator.add** for list concatenation in state
+- Validate state transitions in agent functions
+
+## File Organization
+
+### Backend Structure
+```
+backend/
+├── main.py              # FastAPI app and main endpoints
+├── agents/              # LangGraph agent implementations
+├── tools/               # Tool definitions
+├── models/              # Pydantic models
+├── utils/               # Utility functions
+└── tests/               # Test files
+```
+
+### Frontend Structure
+```
+frontend/
+├── index.html           # Main application
+├── assets/              # Static assets
+└── components/          # Reusable components (if needed)
+```
+
+## Environment & Configuration
+
+### Environment Variables
+- Use **python-dotenv** for environment management
+- Provide **default values** for optional configurations
+- Use **env_example.txt** as template
+- Validate required environment variables at startup
+
+### Dependencies
+- Use **uv** for fast, deterministic installs
+- Pin **major versions** in requirements.txt
+- Use **pyproject.toml** for project metadata
+- Keep dependencies **minimal** and focused
+
+## Testing & Quality
+
+### Testing Strategy
+- Write **unit tests** for individual functions
+- Create **integration tests** for API endpoints
+- Use **synthetic data** for testing AI workflows
+- Test **error conditions** and edge cases
+- Keep tests **fast** and **isolated**
+
+### Code Quality
+- Use **type checking** with mypy
+- Follow **linting** with flake8/black
+- Keep **cyclomatic complexity** low
+- Use **meaningful variable names**
+- Comment **complex business logic**
+
+## AI/ML Specific Guidelines
+
+### LangGraph Usage
+- Use **StateGraph** for workflow orchestration
+- Implement **proper error handling** in agent chains
+- Use **ToolNode** for tool execution
+- Keep **agent prompts** focused and clear
+- Use **prompt templates** for consistency
+
+### LLM Integration
+- Support **multiple LLM providers** (OpenAI, OpenRouter)
+- Use **temperature** and **max_tokens** appropriately
+- Implement **fallback mechanisms** for LLM failures
+- Use **structured outputs** when possible
+- Handle **rate limiting** gracefully
+
+### Observability
+- Use **Arize/OpenInference** for tracing (optional)
+- Log **tool calls** and **agent decisions**
+- Track **performance metrics**
+- Use **structured logging**
+- Monitor **error rates** and **latency**
+
+## Security & Best Practices
+
+### API Security
+- Use **CORS middleware** appropriately
+- Validate **all input data**
+- Use **environment variables** for secrets
+- Implement **rate limiting** for production
+- Use **HTTPS** in production
+
+### Data Handling
+- **Sanitize user inputs**
+- Use **parameterized queries** (if using databases)
+- Implement **proper error messages** without exposing internals
+- Use **secure defaults** for configurations
+
+## Performance & Optimization
+
+### Backend Performance
+- Use **async/await** for I/O operations
+- Implement **caching** for expensive operations
+- Use **connection pooling** for external services
+- Optimize **database queries** (if applicable)
+- Monitor **memory usage** and **response times**
+
+### Frontend Performance
+- Use **CDN** for external libraries
+- Implement **lazy loading** for large content
+- Optimize **images** and **assets**
+- Use **modern browser APIs** when available
+- Minimize **JavaScript bundle size**
+
+## Deployment & DevOps
+
+### Docker
+- Use **multi-stage builds** for optimization
+- Keep **Docker images** small
+- Use **non-root users** in containers
+- Implement **health checks**
+- Use **docker-compose** for local development
+
+### Render Deployment
+- Use **render.yaml** for configuration
+- Set **environment variables** in dashboard
+- Use **build commands** for dependencies
+- Implement **proper logging**
+- Monitor **deployment health**
+
+## Documentation
+
+### Code Documentation
+- Use **docstrings** for all public APIs
+- Include **type information** in docstrings
+- Document **complex algorithms**
+- Provide **usage examples**
+- Keep **README.md** up to date
+
+### API Documentation
+- Use **FastAPI automatic docs**
+- Include **request/response examples**
+- Document **error conditions**
+- Provide **authentication info**
+- Keep **API versioning** consistent
+
+## Common Patterns
+
+### Error Handling
+```python
+try:
+    result = some_operation()
+except SpecificException as e:
+    logger.error(f"Operation failed: {e}")
+    raise HTTPException(status_code=500, detail="Operation failed")
+```
+
+### Agent Implementation
+```python
+def my_agent(state: MyState) -> MyState:
+    """Agent description with clear purpose."""
+    # Get required data from state
+    # Use tools to gather information
+    # Process and synthesize results
+    # Return updated state
+    return {"key": processed_value}
+```
+
+### Tool Definition
+```python
+@tool
+def my_tool(param: str) -> str:
+    """Tool description with clear purpose and parameters."""
+    # Implement tool logic
+    # Return structured data
+    return result
+```
+
+## Development Workflow
+
+### Local Development
+1. Copy `env_example.txt` to `.env`
+2. Set required environment variables
+3. Install dependencies with `uv pip install -r requirements.txt`
+4. Run with `./start.sh` or `uvicorn main:app --reload`
+5. Test with `python "test scripts"/test_api.py`
+
+### Testing
+- Run **unit tests** before commits
+- Test **API endpoints** with provided scripts
+- Use **synthetic data** for AI workflow testing
+- Validate **frontend functionality** manually
+
+### Deployment
+- Test **Docker build** locally
+- Verify **environment variables** in production
+- Monitor **application health** after deployment
+- Check **logs** for any issues
+
+## Project-Specific Notes
+
+### Trip Planning Logic
+- Research agent: Weather, visa, essential info
+- Budget agent: Cost analysis and breakdown
+- Local agent: Authentic experiences and hidden gems
+- Itinerary agent: Day-by-day planning synthesis
+
+### Tool Categories
+- **Information tools**: Weather, visa, essential info
+- **Budget tools**: Cost analysis, attraction pricing
+- **Local tools**: Customs, hidden gems, local flavor
+- **Planning tools**: Day plans, travel time, packing
+
+### State Flow
+1. Research, Budget, Local agents run in parallel
+2. Results feed into Itinerary agent
+3. Final itinerary is returned to user
+4. Tool calls are tracked for observability
+
+Remember: This is a **tutorial/demo project** - keep implementations **simple** and **educational** while following best practices for production-ready code.
