@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personalized News Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-neutral-50 text-neutral-900 antialiased font-[Inter]">
+  <!-- Nav -->
+  <header class="border-b border-neutral-200 bg-white/80 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
+          <i data-lucide="newspaper" class="h-5 w-5"></i>
+        </span>
+        <span class="text-lg font-semibold tracking-tight">News Agent</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="mx-auto max-w-7xl px-6 pt-10 pb-8">
+    <div class="relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-tr from-indigo-600 via-violet-600 to-fuchsia-600">
+      <div class="absolute inset-0 opacity-20">
+        <img alt="News background" class="h-full w-full object-cover"
+             src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2000&auto=format&fit=crop" />
+      </div>
+      <div class="relative grid gap-6 p-8 md:grid-cols-3 md:p-12">
+        <div class="md:col-span-2">
+          <h1 class="text-white text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
+            Your Personalized News
+          </h1>
+          <p class="mt-3 text-indigo-100/90 text-base md:text-lg">
+            Get intelligent, curated news summaries tailored to your interests with AI-powered analysis and fact-checking.
+          </p>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-white text-sm">
+              <i data-lucide="zap" class="h-4 w-4"></i>
+              Real-time updates
+            </div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-white text-sm">
+              <i data-lucide="brain" class="h-4 w-4"></i>
+              AI analysis
+            </div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-white text-sm">
+              <i data-lucide="shield-check" class="h-4 w-4"></i>
+              Fact-checked
+            </div>
+          </div>
+        </div>
+        <div class="hidden md:block">
+          <div class="relative h-full w-full rounded-xl bg-white/10 p-4 ring-1 ring-white/20 backdrop-blur">
+            <img alt="Digital news" class="h-full w-full rounded-lg object-cover"
+                 src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?q=80&w=1600&auto=format&fit=crop" />
+            <div class="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-black/30 px-3 py-1.5 text-white text-xs">
+              <i data-lucide="trending-up" class="h-3.5 w-3.5"></i> Trending
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature cards -->
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+            <i data-lucide="rss" class="h-5 w-5"></i>
+          </span>
+          <div>
+            <div class="font-semibold tracking-tight">Collection</div>
+            <p class="text-sm text-neutral-600">Multi-source aggregation & filtering.</p>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+            <i data-lucide="user" class="h-5 w-5"></i>
+          </span>
+          <div>
+            <div class="font-semibold tracking-tight">Personalization</div>
+            <p class="text-sm text-neutral-600">Tailored to your interests & style.</p>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+            <i data-lucide="search-check" class="h-5 w-5"></i>
+          </span>
+          <div>
+            <div class="font-semibold tracking-tight">Analysis</div>
+            <p class="text-sm text-neutral-600">Fact-checking & sentiment analysis.</p>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+            <i data-lucide="send" class="h-5 w-5"></i>
+          </span>
+          <div>
+            <div class="font-semibold tracking-tight">Delivery</div>
+            <p class="text-sm text-neutral-600">Smart summaries & multi-format.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- News Dashboard -->
+  <main class="mx-auto max-w-7xl px-6 pb-20">
+    <div class="grid gap-6 lg:grid-cols-3">
+      <!-- Form -->
+      <section class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 class="text-2xl font-semibold tracking-tight">Get Your News</h2>
+        <p class="mt-1 text-sm text-neutral-600">Customize your news experience with your interests and preferences.</p>
+
+        <form id="newsForm" class="mt-6 space-y-4" autocomplete="off">
+          <!-- Interests -->
+          <div>
+            <label for="interests" class="block text-sm font-medium text-neutral-800">Interests (comma-separated)</label>
+            <div class="mt-2 relative">
+              <input id="interests" type="text" placeholder="e.g., technology, politics, health, business"
+                     class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-neutral-900 placeholder-neutral-400 shadow-sm outline-none ring-0 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
+              <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                <i data-lucide="tags" class="h-4.5 w-4.5"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Max Articles -->
+          <div>
+            <label for="maxArticles" class="block text-sm font-medium text-neutral-800">Max Articles</label>
+            <div class="mt-2 relative">
+              <input id="maxArticles" type="number" inputmode="numeric" min="1" max="50" step="1" value="10" placeholder="10"
+                     class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-neutral-900 placeholder-neutral-400 shadow-sm outline-none ring-0 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
+              <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                <i data-lucide="hash" class="h-4.5 w-4.5"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Reading Style (custom select) -->
+          <div class="relative">
+            <label class="block text-sm font-medium text-neutral-800">Reading Style</label>
+            <input id="readingStyleValue" type="hidden" value="balanced" />
+            <button id="readingStyleBtn" type="button"
+                    class="mt-2 w-full inline-flex items-center justify-between rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-left text-neutral-900 shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-200">
+              <span id="readingStyleLabel">Balanced</span>
+              <i data-lucide="chevron-down" class="h-4.5 w-4.5 text-neutral-500"></i>
+            </button>
+            <div id="readingStyleMenu" class="absolute z-20 mt-2 hidden w-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-lg">
+              <button data-value="quick" class="flex w-full items-center justify-between px-3.5 py-2.5 text-sm hover:bg-neutral-50">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="zap" class="h-4 w-4 text-neutral-500"></i>
+                  Quick
+                </span>
+                <span class="text-neutral-500 text-xs">Brief summaries</span>
+              </button>
+              <button data-value="balanced" class="flex w-full items-center justify-between px-3.5 py-2.5 text-sm hover:bg-neutral-50">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="scale" class="h-4 w-4 text-neutral-500"></i>
+                  Balanced
+                </span>
+                <span class="text-neutral-500 text-xs">Comprehensive</span>
+              </button>
+              <button data-value="deep" class="flex w-full items-center justify-between px-3.5 py-2.5 text-sm hover:bg-neutral-50">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="book-open" class="h-4 w-4 text-neutral-500"></i>
+                  Deep
+                </span>
+                <span class="text-neutral-500 text-xs">Detailed analysis</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Time Period -->
+          <div>
+            <label for="timePeriod" class="block text-sm font-medium text-neutral-800">Time Period</label>
+            <div class="mt-2 relative">
+              <select id="timePeriod" 
+                     class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-neutral-900 shadow-sm outline-none ring-0 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200">
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
+              <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                <i data-lucide="clock" class="h-4.5 w-4.5"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="pt-2">
+            <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 py-3 text-white shadow-sm transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-300">
+              <i data-lucide="newspaper" class="h-5 w-5"></i>
+              <span class="font-medium">Get My News</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Output -->
+      <section class="lg:col-span-2 space-y-6">
+        <div id="placeholderCard" class="rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
+          <h3 class="text-xl md:text-2xl font-semibold tracking-tight">Fill out the form to get your personalized news briefing</h3>
+          <p class="mt-2 text-neutral-600">Enter your preferences on the left—your news summary will appear here.</p>
+          <div class="mt-6 grid gap-3 sm:grid-cols-3">
+            <div class="rounded-lg border border-neutral-200 p-4">
+              <div class="flex items-center gap-2 text-neutral-700">
+                <i data-lucide="trending-up" class="h-4 w-4"></i>
+                Breaking news
+              </div>
+              <p class="mt-1 text-sm text-neutral-600">Latest developments and key updates.</p>
+            </div>
+            <div class="rounded-lg border border-neutral-200 p-4">
+              <div class="flex items-center gap-2 text-neutral-700">
+                <i data-lucide="target" class="h-4 w-4"></i>
+                Personalized
+              </div>
+              <p class="mt-1 text-sm text-neutral-600">Tailored to your specific interests.</p>
+            </div>
+            <div class="rounded-lg border border-neutral-200 p-4">
+              <div class="flex items-center gap-2 text-neutral-700">
+                <i data-lucide="shield-check" class="h-4 w-4"></i>
+                Verified
+              </div>
+              <p class="mt-1 text-sm text-neutral-600">Fact-checked and analyzed content.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="results" class="hidden space-y-6"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-neutral-200 bg-white">
+    <div class="mx-auto max-w-7xl px-6 py-10 text-sm text-neutral-600">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-neutral-900 text-white">
+            <i data-lucide="newspaper" class="h-4.5 w-4.5"></i>
+          </span>
+          <span>&copy; <span id="year"></span> News Agent</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <a class="hover:text-neutral-900" href="#">Privacy</a>
+          <a class="hover:text-neutral-900" href="#">Terms</a>
+          <a class="hover:text-neutral-900" href="#">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // Initialize icons and year
+    function renderIcons() { if (window.lucide) lucide.createIcons(); }
+    document.getElementById('year').textContent = new Date().getFullYear();
+    renderIcons();
+
+    // Custom reading style select
+    const readingStyleBtn = document.getElementById('readingStyleBtn');
+    const readingStyleMenu = document.getElementById('readingStyleMenu');
+    const readingStyleLabel = document.getElementById('readingStyleLabel');
+    const readingStyleValue = document.getElementById('readingStyleValue');
+
+    readingStyleBtn.addEventListener('click', () => {
+      readingStyleMenu.classList.toggle('hidden');
+    });
+
+    readingStyleMenu.querySelectorAll('button[data-value]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-value');
+        readingStyleValue.value = val;
+        readingStyleLabel.textContent = btn.innerText.trim().split('\n')[0];
+        readingStyleMenu.classList.add('hidden');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!readingStyleBtn.contains(e.target) && !readingStyleMenu.contains(e.target)) {
+        readingStyleMenu.classList.add('hidden');
+      }
+    });
+
+    // News logic (calls backend)
+    const form = document.getElementById('newsForm');
+    const results = document.getElementById('results');
+    const placeholderCard = document.getElementById('placeholderCard');
+
+    async function submitToBackend(e) {
+      e.preventDefault();
+
+      const interestsInput = (document.getElementById('interests').value || '').trim();
+      const interests = interestsInput ? interestsInput.split(',').map(i => i.trim()).filter(i => i) : [];
+      const maxArticles = Math.max(1, Math.min(50, parseInt(document.getElementById('maxArticles').value || '10', 10)));
+      const readingStyle = document.getElementById('readingStyleValue').value || 'balanced';
+      const timePeriod = document.getElementById('timePeriod').value || 'today';
+
+      placeholderCard.classList.add('hidden');
+      results.classList.remove('hidden');
+      results.innerHTML = `
+        <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div class="flex items-center gap-3 text-neutral-700">
+            <i data-lucide="loader-2" class="h-5 w-5 animate-spin"></i>
+            Gathering your personalized news...
+          </div>
+        </div>
+      `;
+      renderIcons();
+
+      try {
+        const resp = await fetch('/get-news', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            interests, 
+            reading_style: readingStyle,
+            max_articles: maxArticles,
+            time_period: timePeriod 
+          })
+        });
+
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        const md = (data && data.result) ? data.result : 'No result';
+        const articles = data && data.articles ? data.articles : [];
+
+        // Parse content into sections and create cards
+        const sections = [];
+        const sectionMap = {
+          'Highly Relevant': { icon: 'target', color: 'from-green-50 to-emerald-50', iconColor: 'text-green-600' },
+          'Moderately Relevant': { icon: 'trending-up', color: 'from-blue-50 to-cyan-50', iconColor: 'text-blue-600' },
+          'Trending in Your Area': { icon: 'zap', color: 'from-orange-50 to-amber-50', iconColor: 'text-orange-600' },
+          'Today\'s Key Headlines': { icon: 'newspaper', color: 'from-purple-50 to-violet-50', iconColor: 'text-purple-600' },
+          'Market Implications': { icon: 'trending-up', color: 'from-indigo-50 to-blue-50', iconColor: 'text-indigo-600' },
+          'What This Means For You': { icon: 'user', color: 'from-pink-50 to-rose-50', iconColor: 'text-pink-600' }
+        };
+
+        // Split by sections and parse
+        const lines = md.split('\n');
+        let currentSection = null;
+        let currentContent = [];
+        
+        lines.forEach(line => {
+          const trimmedLine = line.trim();
+          
+          // Check if this line is a section header
+          let foundSection = null;
+          Object.keys(sectionMap).forEach(sectionName => {
+            if (trimmedLine.includes(sectionName) || trimmedLine.toLowerCase().includes(sectionName.toLowerCase())) {
+              foundSection = sectionName;
+            }
+          });
+          
+          if (foundSection) {
+            // Save previous section if it exists
+            if (currentSection && currentContent.length > 0) {
+              sections.push({
+                title: currentSection,
+                content: currentContent.join('\n').trim(),
+                ...sectionMap[currentSection]
+              });
+            }
+            
+            // Start new section
+            currentSection = foundSection;
+            currentContent = [];
+          } else if (currentSection && trimmedLine) {
+            // Add content to current section
+            currentContent.push(line);
+          }
+        });
+        
+        // Add the last section
+        if (currentSection && currentContent.length > 0) {
+          sections.push({
+            title: currentSection,
+            content: currentContent.join('\n').trim(),
+            ...sectionMap[currentSection]
+          });
+        }
+
+        const content = (window.marked && window.marked.parse) ? window.marked.parse(md) : `<pre class="whitespace-pre-wrap">${md}</pre>`;
+        
+        results.innerHTML = `
+          <div class="space-y-6">
+            <!-- News Summary -->
+            <div class="rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+              <div class="p-6 border-b border-neutral-200 bg-gradient-to-r from-neutral-50 to-neutral-100">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
+                      <i data-lucide="newspaper" class="h-5 w-5"></i>
+                    </div>
+                    <div>
+                      <h3 class="text-xl font-semibold tracking-tight text-neutral-900">Your briefing</h3>
+                      <p class="text-sm text-neutral-500">${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                  </div>
+                  <button id="refreshBtn" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm hover:bg-neutral-50 transition-colors">
+                    <i data-lucide="refresh-cw" class="h-4 w-4"></i> Refresh
+                  </button>
+                </div>
+              </div>
+              
+              ${sections.length > 0 ? `
+                <div class="p-6">
+                  <div class="grid gap-4">
+                    ${sections.map((section, index) => `
+                      <div class="group relative overflow-hidden rounded-lg border border-neutral-200 bg-white hover:shadow-md transition-all duration-200">
+                        <div class="p-4">
+                          <div class="flex items-start gap-3">
+                            <div class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${section.color} ${section.iconColor} flex-shrink-0 mt-1">
+                              <i data-lucide="${section.icon}" class="h-4 w-4"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                              <div class="flex items-center gap-2 mb-3">
+                                <h4 class="font-semibold text-neutral-900 text-base">${section.title}</h4>
+                              </div>
+                                                             <div class="text-sm text-neutral-700 leading-relaxed space-y-2">
+                                 ${(section.title === 'Highly Relevant' || section.title === 'Moderately Relevant' || section.title === 'Today\'s Key Headlines' || section.title === 'Market Implications' || section.title === 'What This Means For You') ? 
+                                   // Special formatting for all content sections to show as bullet points
+                                   section.content.split('\n').map(line => {
+                                     const trimmedLine = line.trim();
+                                     if (trimmedLine.startsWith('- ')) {
+                                       return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine.substring(2)}</span></div>`;
+                                     } else if (trimmedLine.startsWith('• ')) {
+                                       return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine.substring(2)}</span></div>`;
+                                     } else if (trimmedLine && !trimmedLine.startsWith('#') && !trimmedLine.startsWith('**')) {
+                                       // Convert regular lines to bullet points for these sections
+                                       return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine}</span></div>`;
+                                     } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                                       return `<div class="font-semibold text-neutral-900 mb-2">${trimmedLine.substring(2, trimmedLine.length - 2)}</div>`;
+                                     }
+                                     return '';
+                                   }).join('') :
+                                   // Regular formatting for other sections
+                                   (window.marked && window.marked.parse) ? 
+                                     window.marked.parse(section.content) : 
+                                     section.content.split('\n').map(line => {
+                                       const trimmedLine = line.trim();
+                                       if (trimmedLine.startsWith('- ')) {
+                                         return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine.substring(2)}</span></div>`;
+                                       } else if (trimmedLine.startsWith('## ')) {
+                                         return `<h3 class="font-semibold text-neutral-900 mt-3 mb-2">${trimmedLine.substring(3)}</h3>`;
+                                       } else if (trimmedLine.startsWith('# ')) {
+                                         return `<h2 class="font-bold text-neutral-900 mt-4 mb-3 text-base">${trimmedLine.substring(2)}</h2>`;
+                                       } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                                         return `<p class="font-semibold text-neutral-900">${trimmedLine.substring(2, trimmedLine.length - 2)}</p>`;
+                                       } else if (trimmedLine) {
+                                         return `<p>${trimmedLine}</p>`;
+                                       }
+                                       return '';
+                                     }).join('')
+                                 }
+                               </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+                             ` : `
+                 <div class="p-6">
+                   <div class="prose max-w-none prose-sm prose-neutral">
+                     ${(window.marked && window.marked.parse) ? 
+                       window.marked.parse(md) : 
+                       `<pre class="whitespace-pre-wrap text-sm">${md}</pre>`
+                     }
+                   </div>
+                 </div>
+               `}
+            </div>
+            
+            <!-- Articles Section -->
+            ${articles.length > 0 ? `
+              <div class="rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-neutral-200 bg-gradient-to-r from-neutral-50 to-neutral-100">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-600">
+                        <i data-lucide="newspaper" class="h-4 w-4 text-white"></i>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-semibold tracking-tight text-neutral-900">Top Stories</h3>
+                        <p class="text-sm text-neutral-500">${articles.length} articles analyzed</p>
+                      </div>
+                    </div>
+                    <button class="text-sm text-neutral-500 hover:text-neutral-700 transition-colors">
+                      <i data-lucide="chevron-right" class="h-4 w-4"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="divide-y divide-neutral-200">
+                  ${articles.map((article, index) => `
+                    <div class="p-6 hover:bg-neutral-50 transition-colors group">
+                      <div class="flex gap-4">
+                        <!-- Article Image/Icon -->
+                        <div class="flex-shrink-0">
+                          <div class="w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center">
+                            ${article.image ? 
+                              `<img src="${article.image}" alt="${article.title}" class="w-full h-full object-cover">` :
+                              `<i data-lucide="newspaper" class="h-6 w-6 text-blue-600"></i>`
+                            }
+                          </div>
+                        </div>
+                        
+                        <!-- Article Content -->
+                        <div class="flex-1 min-w-0">
+                          <!-- Source and Time -->
+                          <div class="flex items-center gap-2 mb-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                              ${article.source || 'News Source'}
+                            </span>
+                            <span class="text-xs text-neutral-500">${article.time || Math.floor(Math.random() * 12) + 1 + ' hours ago'}</span>
+                            <span class="text-xs text-neutral-400">•</span>
+                            <span class="text-xs text-neutral-500">${article.category || 'General'}</span>
+                          </div>
+                          
+                          <!-- Headline -->
+                          <h4 class="font-semibold text-neutral-900 text-base leading-tight mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            ${article.title}
+                          </h4>
+                          
+                          <!-- Summary -->
+                          <p class="text-sm text-neutral-600 leading-relaxed mb-3 line-clamp-3">
+                            ${article.summary || article.description || 'This article covers important developments in ' + (article.category || 'current events') + ' with significant implications for the market and broader economy.'}
+                          </p>
+                          
+                          <!-- Actions -->
+                          <div class="flex items-center gap-4">
+                            <button class="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-700 transition-colors">
+                              <i data-lucide="bookmark" class="h-3 w-3"></i>
+                              Save
+                            </button>
+                            <button class="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-700 transition-colors">
+                              <i data-lucide="share" class="h-3 w-3"></i>
+                              Share
+                            </button>
+                            <button class="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-700 transition-colors">
+                              <i data-lucide="external-link" class="h-3 w-3"></i>
+                              Read more
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+        renderIcons();
+        const refreshBtn = document.getElementById('refreshBtn');
+        refreshBtn?.addEventListener('click', () => form.dispatchEvent(new Event('submit')));
+      } catch (err) {
+        results.innerHTML = `
+          <div class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">
+            <div class="flex items-center gap-2">
+              <i data-lucide="alert-triangle" class="h-5 w-5"></i>
+              <span>Failed to fetch news. Please try again.</span>
+            </div>
+          </div>
+        `;
+        renderIcons();
+        console.error('News error:', err);
+      }
+    }
+
+    form.addEventListener('submit', submitToBackend);
+  </script>
+</body>
+</html>
