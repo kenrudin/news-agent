@@ -35,16 +35,17 @@ from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 
 
-class TripRequest(BaseModel):
-    destination: str
-    duration: str
-    budget: Optional[str] = None
-    interests: Optional[str] = None
-    travel_style: Optional[str] = None
+class NewsRequest(BaseModel):
+    interests: Optional[List[str]] = None
+    reading_style: Optional[str] = "balanced"  # quick, balanced, deep
+    sources: Optional[List[str]] = None
+    max_articles: Optional[int] = 10
+    time_period: Optional[str] = "today"  # today, week, month
 
 
-class TripResponse(BaseModel):
+class NewsResponse(BaseModel):
     result: str
+    articles: List[Dict[str, Any]] = []
     tool_calls: List[Dict[str, Any]] = []
 
 
@@ -81,142 +82,156 @@ def _init_llm():
 llm = _init_llm()
 
 
-# Minimal tools (deterministic for tutorials)
+# News Collection Tools
 @tool
-def essential_info(destination: str) -> str:
-    """Return essential destination info like weather, sights, and etiquette."""
-    # Enhanced mock data with actual structure
-    return f"""Essential Information for {destination}:
-    - Climate: Tropical/temperate with seasonal variations
-    - Best time to visit: Spring and fall months
-    - Top attractions: Historical sites, natural landmarks, cultural centers
-    - Local customs: Respectful dress at religious sites, tipping culture varies
-    - Language: Local language with English widely spoken in tourist areas
-    - Currency: Local currency, credit cards accepted in most establishments
-    - Safety: Generally safe for tourists, standard precautions advised"""
-
-
-@tool
-def budget_basics(destination: str, duration: str) -> str:
-    """Return high-level budget categories for a given destination and duration."""
-    return f"""Budget breakdown for {destination} ({duration}):
-    - Accommodation: $50-200/night depending on style
-    - Meals: $30-80/day (street food to restaurants)
-    - Local transport: $10-30/day (public transit to taxis)
-    - Activities/attractions: $20-60/day
-    - Shopping/extras: $20-50/day
-    Total estimated daily budget: $130-420 depending on travel style"""
+def fetch_breaking_news(sources: Optional[List[str]] = None) -> str:
+    """Fetch latest breaking news from multiple sources."""
+    source_str = ", ".join(sources) if sources else "major news outlets"
+    return f"""Breaking News Summary from {source_str}:
+    - Global Markets: Tech stocks rally amid AI breakthrough announcements
+    - Politics: Congressional hearings continue on digital privacy legislation
+    - Climate: New renewable energy targets announced by major economies
+    - Technology: Major cloud provider reports record growth in AI services
+    - Health: WHO releases updated guidelines for seasonal health preparedness
+    - Business: Merger activity increases in the fintech sector
+    - Science: Breakthrough in quantum computing research published in Nature"""
 
 
 @tool
-def local_flavor(destination: str, interests: Optional[str] = None) -> str:
-    """Suggest authentic local experiences matching optional interests."""
-    interest_str = f" focusing on {interests}" if interests else ""
-    return f"""Authentic local experiences in {destination}{interest_str}:
-    - Morning markets with local vendors and fresh produce
-    - Traditional cooking classes with local families
-    - Neighborhood walking tours off the beaten path
-    - Local artisan workshops and craft demonstrations
-    - Community cultural performances and festivals
-    - Hidden cafes and restaurants favored by locals
-    - Sacred sites and temples with cultural significance"""
+def search_topic_news(topic: str, time_period: str = "today") -> str:
+    """Search for news articles on a specific topic within timeframe."""
+    return f"""Recent news about '{topic}' ({time_period}):
+    - Market Analysis: Sector shows resilience amid economic uncertainty
+    - Innovation Updates: New developments in {topic} technology announced
+    - Policy Changes: Regulatory frameworks evolving to address {topic} challenges
+    - Industry Insights: Leading experts predict growth trends for {topic}
+    - Global Impact: International perspective on {topic} developments
+    - Research Findings: Academic studies reveal new insights about {topic}
+    - Investment Trends: Funding patterns show increased interest in {topic}"""
 
 
 @tool
-def day_plan(destination: str, day: int) -> str:
-    """Return a simple day plan outline for a specific day number."""
-    return f"Day {day} in {destination}: breakfast, highlight visit, lunch, afternoon walk, dinner."
-
-
-# Additional simple tools per agent (to mirror original multi-tool behavior)
-@tool
-def weather_brief(destination: str) -> str:
-    """Return a brief weather summary for planning purposes."""
-    return f"""Weather overview for {destination}:
-    - Current season: Varies by hemisphere and elevation
-    - Temperature range: 20-30°C (68-86°F) typical
-    - Rainfall: Seasonal patterns, pack rain gear if visiting in wet season
-    - Humidity: Moderate to high in tropical areas
-    - Pack: Layers, sun protection, comfortable walking shoes"""
+def get_source_credibility(source: str) -> str:
+    """Check credibility and bias information for a news source."""
+    return f"""Source Analysis for {source}:
+    - Credibility Score: High (verified through multiple fact-checking organizations)
+    - Political Bias: Moderate/Center (based on content analysis)
+    - Fact-Check Record: 95% accuracy rate over past year
+    - Transparency: Clear editorial policies and correction procedures
+    - Expertise: Strong track record in investigative journalism
+    - International Coverage: Comprehensive global news network
+    - Reader Trust: High trust rating from media literacy organizations"""
 
 
 @tool
-def visa_brief(destination: str) -> str:
-    """Return a brief visa guidance placeholder for tutorial purposes."""
-    return f"Visa guidance for {destination}: check your nationality's embassy site."
+def analyze_sentiment(article_content: str) -> str:
+    """Analyze sentiment and tone of news content."""
+    return f"""Sentiment Analysis:
+    - Overall Tone: Neutral-to-positive with factual presentation
+    - Emotional Elements: Balanced reporting without sensationalism
+    - Bias Indicators: Minimal partisan language detected
+    - Objectivity Score: 8.5/10 (high objectivity)
+    - Key Themes: Economic growth, technological innovation, policy stability
+    - Expert Quotes: Multiple authoritative sources cited
+    - Context Provided: Historical background and broader implications included"""
 
 
 @tool
-def attraction_prices(destination: str, attractions: Optional[List[str]] = None) -> str:
-    """Return rough placeholder prices for attractions."""
-    items = attractions or ["Museum", "Historic Site", "Viewpoint"]
-    priced = "\n    - ".join(f"{a}: $10-40 per person" for a in items)
-    return f"""Attraction pricing in {destination}:
-    - {priced}
-    - Multi-day passes: Often 20-30% savings
-    - Student/senior discounts: Usually 25-50% off
-    - Free days: Many museums offer free entry certain days/hours
-    - Booking online: Can save 10-15% vs gate prices"""
+def fact_check_claims(claims: List[str]) -> str:
+    """Verify factual claims in news content."""
+    claims_str = "; ".join(claims[:3])  # Limit for demo
+    return f"""Fact Check Results for: {claims_str}
+    - Verification Status: Claims verified through primary sources
+    - Cross-Reference: Confirmed by multiple independent outlets
+    - Expert Validation: Subject matter experts consulted
+    - Data Sources: Government databases and official statistics referenced
+    - Historical Context: Claims align with established historical patterns
+    - Confidence Level: High confidence in accuracy (90%+)
+    - Additional Notes: All numerical data matches official records"""
 
 
 @tool
-def local_customs(destination: str) -> str:
-    """Return simple etiquette reminders for the destination."""
-    return f"Customs in {destination}: be polite, modest dress in sacred places, learn greetings."
+def categorize_articles(articles: List[str]) -> str:
+    """Categorize news articles by topic and importance."""
+    article_count = len(articles) if articles else 5
+    return f"""Article Categorization ({article_count} articles):
+    - Politics & Policy: 2 articles (high importance)
+    - Technology & Innovation: 2 articles (medium-high importance)  
+    - Business & Economy: 1 article (medium importance)
+    - Health & Science: 1 article (medium importance)
+    - International Affairs: 1 article (high importance)
+    - Climate & Environment: 1 article (medium importance)
+    - Breaking News Priority: 3 articles flagged as urgent updates"""
 
 
 @tool
-def hidden_gems(destination: str) -> str:
-    """Return a few off-the-beaten-path ideas."""
-    return f"""Hidden gems in {destination}:
-    - Secret sunrise viewpoint known mainly to locals
-    - Family-run restaurant with no sign (ask locals for directions)
-    - Abandoned temple/building with incredible architecture
-    - Local swimming hole or beach away from tourist crowds  
-    - Artisan quarter where craftsmen still work traditionally
-    - Night market that only operates certain days
-    - Community garden or park perfect for picnics"""
+def generate_summary(articles: List[str], reading_style: str = "balanced") -> str:
+    """Generate personalized news summary based on reading style preference."""
+    style_desc = {"quick": "brief bullet points", "balanced": "comprehensive overview", "deep": "detailed analysis"}
+    return f"""Personalized News Summary ({style_desc.get(reading_style, 'balanced')}):
+    
+    Today's Key Headlines:
+    - Technology sector shows strong growth with new AI partnerships announced
+    - Climate policy developments gain momentum in major economies
+    - Global markets respond positively to economic stability indicators
+    - Healthcare innovations receive increased funding and regulatory support
+    
+    Market Implications:
+    - Tech stocks likely to see continued interest from investors
+    - Renewable energy sector positioning for expansion
+    - Healthcare technology showing promise for long-term growth
+    
+    What This Means For You:
+    - Economic indicators suggest stable consumer environment
+    - Technology developments may impact daily digital services
+    - Policy changes could affect long-term investment strategies"""
 
 
 @tool
-def travel_time(from_location: str, to_location: str, mode: str = "public") -> str:
-    """Return an approximate travel time placeholder."""
-    return f"Travel from {from_location} to {to_location} by {mode}: ~20-60 minutes."
+def personalize_content(user_interests: List[str], articles: List[str]) -> str:
+    """Personalize content based on user interests and reading history."""
+    interests_str = ", ".join(user_interests[:3]) if user_interests else "general news"
+    return f"""Personalized Content for interests in {interests_str}:
+    - Highly Relevant: 4 articles match your primary interests
+    - Moderately Relevant: 3 articles relate to your secondary interests  
+    - Trending in Your Areas: 2 emerging stories in your interest categories
+    - Expert Recommendations: 3 articles suggested based on similar reader preferences
+    - Deep Dive Opportunities: 2 complex stories with analysis available
+    - Quick Updates: 5 brief summaries for staying informed
+    - Priority Reading: 3 articles marked as essential for your interests"""
 
 
-@tool
-def packing_list(destination: str, duration: str, activities: Optional[List[str]] = None) -> str:
-    """Return a generic packing list summary."""
-    acts = ", ".join(activities or ["walking", "sightseeing"]) 
-    return f"Packing for {destination} ({duration}): comfortable shoes, layers, adapter; for {acts}."
-
-
-class TripState(TypedDict):
+class NewsState(TypedDict):
     messages: Annotated[List[BaseMessage], operator.add]
-    trip_request: Dict[str, Any]
-    research: Optional[str]
-    budget: Optional[str]
-    local: Optional[str]
+    news_request: Dict[str, Any]
+    collection: Optional[str]
+    personalization: Optional[str]
+    analysis: Optional[str]
+    delivery: Optional[str]
     final: Optional[str]
+    articles: Annotated[List[Dict[str, Any]], operator.add]
     tool_calls: Annotated[List[Dict[str, Any]], operator.add]
 
 
-def research_agent(state: TripState) -> TripState:
-    req = state["trip_request"]
-    destination = req["destination"]
+def news_collection_agent(state: NewsState) -> NewsState:
+    req = state["news_request"]
+    interests = req.get("interests", [])
+    sources = req.get("sources", [])
+    time_period = req.get("time_period", "today")
+    
     prompt_t = (
-        "You are a research assistant.\n"
-        "Gather essential information about {destination}.\n"
-        "Use tools to get weather, visa, and essential info, then summarize."
+        "You are a news collection agent.\n"
+        "Gather latest news from multiple sources for interests: {interests}.\n"
+        "Time period: {time_period}. Use tools to fetch breaking news and search specific topics."
     )
-    vars_ = {"destination": destination}
+    vars_ = {"interests": ", ".join(interests) if interests else "general news", "time_period": time_period}
     
     messages = [SystemMessage(content=prompt_t.format(**vars_))]
-    tools = [essential_info, weather_brief, visa_brief]
+    tools = [fetch_breaking_news, search_topic_news, get_source_credibility]
     agent = llm.bind_tools(tools)
     
     calls: List[Dict[str, Any]] = []
-    tool_results = []
+    articles: List[Dict[str, Any]] = []
     
     with using_prompt_template(template=prompt_t, variables=vars_, version="v1"):
         res = agent.invoke(messages)
@@ -224,49 +239,7 @@ def research_agent(state: TripState) -> TripState:
     # Collect tool calls and execute them
     if getattr(res, "tool_calls", None):
         for c in res.tool_calls:
-            calls.append({"agent": "research", "tool": c["name"], "args": c.get("args", {})})
-        
-        tool_node = ToolNode(tools)
-        tr = tool_node.invoke({"messages": [res]})
-        tool_results = tr["messages"]
-        
-        # Add tool results to conversation and ask LLM to synthesize
-        messages.append(res)
-        messages.extend(tool_results)
-        messages.append(SystemMessage(content="Based on the above information, provide a comprehensive summary for the traveler."))
-        
-        # Get final synthesis from LLM
-        final_res = llm.invoke(messages)
-        out = final_res.content
-    else:
-        out = res.content
-
-    return {"messages": [SystemMessage(content=out)], "research": out, "tool_calls": calls}
-
-
-def budget_agent(state: TripState) -> TripState:
-    req = state["trip_request"]
-    destination, duration = req["destination"], req["duration"]
-    budget = req.get("budget", "moderate")
-    prompt_t = (
-        "You are a budget analyst.\n"
-        "Analyze costs for {destination} over {duration} with budget: {budget}.\n"
-        "Use tools to get pricing information, then provide a detailed breakdown."
-    )
-    vars_ = {"destination": destination, "duration": duration, "budget": budget}
-    
-    messages = [SystemMessage(content=prompt_t.format(**vars_))]
-    tools = [budget_basics, attraction_prices]
-    agent = llm.bind_tools(tools)
-    
-    calls: List[Dict[str, Any]] = []
-    
-    with using_prompt_template(template=prompt_t, variables=vars_, version="v1"):
-        res = agent.invoke(messages)
-    
-    if getattr(res, "tool_calls", None):
-        for c in res.tool_calls:
-            calls.append({"agent": "budget", "tool": c["name"], "args": c.get("args", {})})
+            calls.append({"agent": "collection", "tool": c["name"], "args": c.get("args", {})})
         
         tool_node = ToolNode(tools)
         tr = tool_node.invoke({"messages": [res]})
@@ -274,103 +247,200 @@ def budget_agent(state: TripState) -> TripState:
         # Add tool results and ask for synthesis
         messages.append(res)
         messages.extend(tr["messages"])
-        messages.append(SystemMessage(content=f"Create a detailed budget breakdown for {duration} in {destination} with a {budget} budget."))
+        messages.append(SystemMessage(content="Based on the collected news, provide a summary of the latest developments."))
         
         final_res = llm.invoke(messages)
         out = final_res.content
+        
+        # Mock articles for demo with more realistic data
+        sample_articles = [
+            {"title": "Congressional hearings continue on digital privacy legislation", "source": "Reuters", "category": "Politics", "time": "2 hours ago", "summary": "Lawmakers debate comprehensive data protection framework"},
+            {"title": "Tech stocks rally amid AI breakthrough announcements", "source": "Bloomberg", "category": "Technology", "time": "1 hour ago", "summary": "Major cloud providers report record growth in AI services"},
+            {"title": "Climate targets announced by major economies at summit", "source": "BBC", "category": "Climate", "time": "4 hours ago", "summary": "New renewable energy goals set for 2030"},
+            {"title": "Healthcare innovation receives increased federal funding", "source": "AP", "category": "Health", "time": "3 hours ago", "summary": "Medical research grants focus on breakthrough therapies"},
+            {"title": "Global markets respond to economic stability indicators", "source": "Financial Times", "category": "Business", "time": "5 hours ago", "summary": "Consumer confidence rises amid steady employment rates"},
+            {"title": "Quantum computing research breakthrough published", "source": "Nature", "category": "Science", "time": "6 hours ago", "summary": "New algorithm shows promise for complex problem solving"},
+            {"title": "Merger activity increases in fintech sector", "source": "Wall Street Journal", "category": "Business", "time": "8 hours ago", "summary": "Digital banking solutions drive consolidation"},
+            {"title": "WHO releases seasonal health preparedness guidelines", "source": "CNN", "category": "Health", "time": "7 hours ago", "summary": "Updated protocols for respiratory illness prevention"}
+        ]
+        
+        # Select articles based on user interests
+        user_interests = req.get("interests", [])
+        max_articles = req.get("max_articles", 10)
+        if user_interests:
+            # Filter articles that match user interests (simple keyword matching)
+            filtered_articles = [
+                article for article in sample_articles
+                if any(interest.lower() in article["title"].lower() or 
+                      interest.lower() in article["category"].lower() 
+                      for interest in user_interests)
+            ]
+            if not filtered_articles:
+                filtered_articles = sample_articles[:max_articles]
+            articles = filtered_articles[:max_articles]
+        else:
+            articles = sample_articles[:max_articles]
     else:
         out = res.content
 
-    return {"messages": [SystemMessage(content=out)], "budget": out, "tool_calls": calls}
+    return {"messages": [SystemMessage(content=out)], "collection": out, "tool_calls": calls, "articles": articles}
 
 
-def local_agent(state: TripState) -> TripState:
-    req = state["trip_request"]
-    destination = req["destination"]
-    interests = req.get("interests", "local culture")
-    travel_style = req.get("travel_style", "standard")
+def personalization_agent(state: NewsState) -> NewsState:
+    req = state["news_request"]
+    interests = req.get("interests", [])
+    reading_style = req.get("reading_style", "balanced")
+    max_articles = req.get("max_articles", 10)
+    
     prompt_t = (
-        "You are a local guide.\n"
-        "Find authentic experiences in {destination} for someone interested in: {interests}.\n"
-        "Travel style: {travel_style}. Use tools to gather local insights."
-    )
-    vars_ = {"destination": destination, "interests": interests, "travel_style": travel_style}
-    
-    messages = [SystemMessage(content=prompt_t.format(**vars_))]
-    tools = [local_flavor, local_customs, hidden_gems]
-    agent = llm.bind_tools(tools)
-    
-    calls: List[Dict[str, Any]] = []
-    
-    with using_prompt_template(template=prompt_t, variables=vars_, version="v1"):
-        res = agent.invoke(messages)
-    
-    if getattr(res, "tool_calls", None):
-        for c in res.tool_calls:
-            calls.append({"agent": "local", "tool": c["name"], "args": c.get("args", {})})
-        
-        tool_node = ToolNode(tools)
-        tr = tool_node.invoke({"messages": [res]})
-        
-        # Add tool results and ask for synthesis
-        messages.append(res)
-        messages.extend(tr["messages"])
-        messages.append(SystemMessage(content=f"Create a curated list of authentic experiences for someone interested in {interests} with a {travel_style} approach."))
-        
-        final_res = llm.invoke(messages)
-        out = final_res.content
-    else:
-        out = res.content
-
-    return {"messages": [SystemMessage(content=out)], "local": out, "tool_calls": calls}
-
-
-def itinerary_agent(state: TripState) -> TripState:
-    req = state["trip_request"]
-    destination = req["destination"]
-    duration = req["duration"]
-    travel_style = req.get("travel_style", "standard")
-    prompt_t = (
-        "Create a {duration} itinerary for {destination} ({travel_style}).\n\n"
-        "Inputs:\nResearch: {research}\nBudget: {budget}\nLocal: {local}\n"
+        "You are a personalization agent.\n"
+        "Customize news content for user interests: {interests}.\n"
+        "Reading style: {reading_style}. Max articles: {max_articles}. Use tools to personalize content."
     )
     vars_ = {
-        "duration": duration,
-        "destination": destination,
-        "travel_style": travel_style,
-        "research": (state.get("research") or "")[:400],
-        "budget": (state.get("budget") or "")[:400],
-        "local": (state.get("local") or "")[:400],
+        "interests": ", ".join(interests) if interests else "general topics", 
+        "reading_style": reading_style,
+        "max_articles": max_articles
     }
+    
+    messages = [SystemMessage(content=prompt_t.format(**vars_))]
+    tools = [personalize_content, categorize_articles]
+    agent = llm.bind_tools(tools)
+    
+    calls: List[Dict[str, Any]] = []
+    
     with using_prompt_template(template=prompt_t, variables=vars_, version="v1"):
-        res = llm.invoke([SystemMessage(content=prompt_t.format(**vars_))])
-    return {"messages": [SystemMessage(content=res.content)], "final": res.content}
+        res = agent.invoke(messages)
+    
+    if getattr(res, "tool_calls", None):
+        for c in res.tool_calls:
+            calls.append({"agent": "personalization", "tool": c["name"], "args": c.get("args", {})})
+        
+        tool_node = ToolNode(tools)
+        tr = tool_node.invoke({"messages": [res]})
+        
+        # Add tool results and ask for synthesis
+        messages.append(res)
+        messages.extend(tr["messages"])
+        messages.append(SystemMessage(content=f"Create a personalized news experience for {reading_style} reading style with focus on {', '.join(interests) if interests else 'general topics'}."))
+        
+        final_res = llm.invoke(messages)
+        out = final_res.content
+    else:
+        out = res.content
+
+    return {"messages": [SystemMessage(content=out)], "personalization": out, "tool_calls": calls}
+
+
+def analysis_agent(state: NewsState) -> NewsState:
+    req = state["news_request"]
+    articles = state.get("articles", [])
+    
+    prompt_t = (
+        "You are a news analysis agent.\n"
+        "Analyze news content for sentiment, bias, and factual accuracy.\n"
+        "Provide balanced perspectives and fact-checking for {article_count} articles."
+    )
+    vars_ = {"article_count": len(articles)}
+    
+    messages = [SystemMessage(content=prompt_t.format(**vars_))]
+    tools = [analyze_sentiment, fact_check_claims]
+    agent = llm.bind_tools(tools)
+    
+    calls: List[Dict[str, Any]] = []
+    
+    with using_prompt_template(template=prompt_t, variables=vars_, version="v1"):
+        res = agent.invoke(messages)
+    
+    if getattr(res, "tool_calls", None):
+        for c in res.tool_calls:
+            calls.append({"agent": "analysis", "tool": c["name"], "args": c.get("args", {})})
+        
+        tool_node = ToolNode(tools)
+        tr = tool_node.invoke({"messages": [res]})
+        
+        # Add tool results and ask for synthesis
+        messages.append(res)
+        messages.extend(tr["messages"])
+        messages.append(SystemMessage(content="Provide comprehensive analysis including sentiment assessment and fact verification results."))
+        
+        final_res = llm.invoke(messages)
+        out = final_res.content
+    else:
+        out = res.content
+
+    return {"messages": [SystemMessage(content=out)], "analysis": out, "tool_calls": calls}
+
+
+def delivery_agent(state: NewsState) -> NewsState:
+    req = state["news_request"]
+    reading_style = req.get("reading_style", "balanced")
+    articles = state.get("articles", [])
+    
+    prompt_t = (
+        "Create a personalized news briefing with {reading_style} style.\n\n"
+        "Inputs:\nCollection: {collection}\nPersonalization: {personalization}\nAnalysis: {analysis}\n"
+    )
+    vars_ = {
+        "reading_style": reading_style,
+        "collection": (state.get("collection") or "")[:400],
+        "personalization": (state.get("personalization") or "")[:400],
+        "analysis": (state.get("analysis") or "")[:400],
+    }
+    
+    messages = [SystemMessage(content=prompt_t.format(**vars_))]
+    tools = [generate_summary]
+    agent = llm.bind_tools(tools)
+    
+    calls: List[Dict[str, Any]] = []
+    
+    with using_prompt_template(template=prompt_t, variables=vars_, version="v1"):
+        res = agent.invoke(messages)
+    
+    if getattr(res, "tool_calls", None):
+        for c in res.tool_calls:
+            calls.append({"agent": "delivery", "tool": c["name"], "args": c.get("args", {})})
+        
+        tool_node = ToolNode(tools)
+        tr = tool_node.invoke({"messages": [res]})
+        
+        # Add tool results and ask for synthesis
+        messages.append(res)
+        messages.extend(tr["messages"])
+        messages.append(SystemMessage(content=f"Create a final news briefing optimized for {reading_style} reading style."))
+        
+        final_res = llm.invoke(messages)
+        out = final_res.content
+    else:
+        out = res.content
+    
+    return {"messages": [SystemMessage(content=out)], "delivery": out, "final": out, "tool_calls": calls}
 
 
 def build_graph():
-    g = StateGraph(TripState)
-    g.add_node("research", research_agent)
-    g.add_node("budget", budget_agent)
-    g.add_node("local", local_agent)
-    g.add_node("itinerary", itinerary_agent)
+    g = StateGraph(NewsState)
+    g.add_node("collection", news_collection_agent)
+    g.add_node("personalization", personalization_agent)
+    g.add_node("analysis", analysis_agent)
+    g.add_node("delivery", delivery_agent)
 
-    # Run research, budget, and local agents in parallel
-    g.add_edge(START, "research")
-    g.add_edge(START, "budget")
-    g.add_edge(START, "local")
+    # Run collection, personalization, and analysis agents in parallel
+    g.add_edge(START, "collection")
+    g.add_edge(START, "personalization")
+    g.add_edge(START, "analysis")
     
-    # All three agents feed into the itinerary agent
-    g.add_edge("research", "itinerary")
-    g.add_edge("budget", "itinerary")
-    g.add_edge("local", "itinerary")
+    # All three agents feed into the delivery agent
+    g.add_edge("collection", "delivery")
+    g.add_edge("personalization", "delivery")
+    g.add_edge("analysis", "delivery")
     
-    g.add_edge("itinerary", END)
+    g.add_edge("delivery", END)
 
     # Compile without checkpointer to avoid state persistence issues
     return g.compile()
 
 
-app = FastAPI(title="AI Trip Planner")
+app = FastAPI(title="Personalized News Agent")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -382,16 +452,40 @@ app.add_middleware(
 
 @app.get("/")
 def serve_frontend():
+    from fastapi.responses import FileResponse
     here = os.path.dirname(__file__)
     path = os.path.join(here, "..", "frontend", "index.html")
     if os.path.exists(path):
-        return FileResponse(path)
+        return FileResponse(
+            path,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
     return {"message": "frontend/index.html not found"}
 
 
+@app.get("/test")
+def serve_test_page():
+    from fastapi.responses import FileResponse
+    here = os.path.dirname(__file__)
+    path = os.path.join(here, "..", "frontend", "test.html")
+    if os.path.exists(path):
+        return FileResponse(
+            path,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
+    return {"message": "test.html not found"}
+
 @app.get("/health")
 def health():
-    return {"status": "healthy", "service": "ai-trip-planner"}
+    return {"status": "healthy", "service": "personalized-news-agent"}
 
 
 # Initialize tracing once at startup, not per request
@@ -400,26 +494,29 @@ if _TRACING:
         space_id = os.getenv("ARIZE_SPACE_ID")
         api_key = os.getenv("ARIZE_API_KEY")
         if space_id and api_key:
-            tp = register(space_id=space_id, api_key=api_key, project_name="ai-trip-planner")
+            tp = register(space_id=space_id, api_key=api_key, project_name="personalized-news-agent")
             LangChainInstrumentor().instrument(tracer_provider=tp, include_chains=True, include_agents=True, include_tools=True)
             LiteLLMInstrumentor().instrument(tracer_provider=tp, skip_dep_check=True)
     except Exception:
         pass
 
-@app.post("/plan-trip", response_model=TripResponse)
-def plan_trip(req: TripRequest):
-
+@app.post("/get-news", response_model=NewsResponse)
+def get_news(req: NewsRequest):
     graph = build_graph()
     # Only include necessary fields in initial state
-    # Agent outputs (research, budget, local, final) will be added during execution
     state = {
         "messages": [],
-        "trip_request": req.model_dump(),
+        "news_request": req.model_dump(),
+        "articles": [],
         "tool_calls": [],
     }
     # No config needed without checkpointer
     out = graph.invoke(state)
-    return TripResponse(result=out.get("final", ""), tool_calls=out.get("tool_calls", []))
+    return NewsResponse(
+        result=out.get("final", ""), 
+        articles=out.get("articles", []),
+        tool_calls=out.get("tool_calls", [])
+    )
 
 
 if __name__ == "__main__":
