@@ -13,6 +13,7 @@ services:
       - OPENROUTER_MODEL=${OPENROUTER_MODEL}
       - ARIZE_SPACE_ID=${ARIZE_SPACE_ID}
       - ARIZE_API_KEY=${ARIZE_API_KEY}
+      - NEWS_API_KEY=${NEWS_API_KEY}
     volumes:
       - ./backend:/app
       - ./frontend/index.html:/app/../frontend/index.html:ro

@@ -354,6 +354,10 @@
         // Parse content into sections and create cards
         const sections = [];
         const sectionMap = {
+          'News Briefing': { icon: 'newspaper', color: 'from-blue-50 to-cyan-50', iconColor: 'text-blue-600' },
+          'Personalized Content': { icon: 'user', color: 'from-green-50 to-emerald-50', iconColor: 'text-green-600' },
+          'Analysis': { icon: 'search-check', color: 'from-purple-50 to-violet-50', iconColor: 'text-purple-600' },
+          'Sentiment Analysis': { icon: 'search-check', color: 'from-purple-50 to-violet-50', iconColor: 'text-purple-600' },
           'Highly Relevant': { icon: 'target', color: 'from-green-50 to-emerald-50', iconColor: 'text-green-600' },
           'Moderately Relevant': { icon: 'trending-up', color: 'from-blue-50 to-cyan-50', iconColor: 'text-blue-600' },
           'Trending in Your Area': { icon: 'zap', color: 'from-orange-50 to-amber-50', iconColor: 'text-orange-600' },
@@ -370,15 +374,8 @@
         lines.forEach(line => {
           const trimmedLine = line.trim();
           
-          // Check if this line is a section header
-          let foundSection = null;
-          Object.keys(sectionMap).forEach(sectionName => {
-            if (trimmedLine.includes(sectionName) || trimmedLine.toLowerCase().includes(sectionName.toLowerCase())) {
-              foundSection = sectionName;
-            }
-          });
-          
-          if (foundSection) {
+          // Check if this line is a markdown header (##)
+          if (trimmedLine.startsWith('## ')) {
             // Save previous section if it exists
             if (currentSection && currentContent.length > 0) {
               sections.push({
@@ -388,11 +385,30 @@
               });
             }
             
+            // Extract header text and find matching section
+            const headerText = trimmedLine.substring(3).trim();
+            let foundSection = null;
+            
+            // Direct match or partial match
+            Object.keys(sectionMap).forEach(sectionName => {
+              if (headerText === sectionName || 
+                  headerText.toLowerCase().includes(sectionName.toLowerCase()) ||
+                  sectionName.toLowerCase().includes(headerText.toLowerCase())) {
+                foundSection = sectionName;
+              }
+            });
+            
+            // If no match found, use the header text as is
+            if (!foundSection) {
+              foundSection = headerText;
+              sectionMap[foundSection] = { icon: 'file-text', color: 'from-neutral-50 to-gray-50', iconColor: 'text-neutral-600' };
+            }
+            
             // Start new section
             currentSection = foundSection;
             currentContent = [];
           } else if (currentSection && trimmedLine) {
-            // Add content to current section
+            // Add content to current section (skip the header line itself)
             currentContent.push(line);
           }
         });
@@ -444,41 +460,26 @@
                                 <h4 class="font-semibold text-neutral-900 text-base">${section.title}</h4>
                               </div>
                                                              <div class="text-sm text-neutral-700 leading-relaxed space-y-2">
-                                 ${(section.title === 'Highly Relevant' || section.title === 'Moderately Relevant' || section.title === 'Today\'s Key Headlines' || section.title === 'Market Implications' || section.title === 'What This Means For You') ? 
-                                   // Special formatting for all content sections to show as bullet points
-                                   section.content.split('\n').map(line => {
-                                     const trimmedLine = line.trim();
-                                     if (trimmedLine.startsWith('- ')) {
-                                       return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine.substring(2)}</span></div>`;
-                                     } else if (trimmedLine.startsWith('• ')) {
-                                       return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine.substring(2)}</span></div>`;
-                                     } else if (trimmedLine && !trimmedLine.startsWith('#') && !trimmedLine.startsWith('**')) {
-                                       // Convert regular lines to bullet points for these sections
-                                       return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine}</span></div>`;
-                                     } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-                                       return `<div class="font-semibold text-neutral-900 mb-2">${trimmedLine.substring(2, trimmedLine.length - 2)}</div>`;
-                                     }
-                                     return '';
-                                   }).join('') :
-                                   // Regular formatting for other sections
-                                   (window.marked && window.marked.parse) ? 
-                                     window.marked.parse(section.content) : 
-                                     section.content.split('\n').map(line => {
-                                       const trimmedLine = line.trim();
-                                       if (trimmedLine.startsWith('- ')) {
-                                         return `<div class="flex items-start gap-2"><span class="text-neutral-400 mt-1">•</span><span>${trimmedLine.substring(2)}</span></div>`;
-                                       } else if (trimmedLine.startsWith('## ')) {
-                                         return `<h3 class="font-semibold text-neutral-900 mt-3 mb-2">${trimmedLine.substring(3)}</h3>`;
-                                       } else if (trimmedLine.startsWith('# ')) {
-                                         return `<h2 class="font-bold text-neutral-900 mt-4 mb-3 text-base">${trimmedLine.substring(2)}</h2>`;
-                                       } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-                                         return `<p class="font-semibold text-neutral-900">${trimmedLine.substring(2, trimmedLine.length - 2)}</p>`;
-                                       } else if (trimmedLine) {
-                                         return `<p>${trimmedLine}</p>`;
-                                       }
-                                       return '';
-                                     }).join('')
-                                 }
+                                 ${section.content.split('\n').map(line => {
+                                   const trimmedLine = line.trim();
+                                   if (trimmedLine.startsWith('- ')) {
+                                     const cleanText = trimmedLine.substring(2).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                                     return `<div class="flex items-start gap-3 mb-2"><span class="text-blue-500 text-lg leading-tight">•</span><span class="flex-1">${cleanText}</span></div>`;
+                                   } else if (trimmedLine.startsWith('• ')) {
+                                     const cleanText = trimmedLine.substring(2).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                                     return `<div class="flex items-start gap-3 mb-2"><span class="text-blue-500 text-lg leading-tight">•</span><span class="flex-1">${cleanText}</span></div>`;
+                                   } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                                     return `<div class="font-semibold text-neutral-900 mb-2 mt-3">${trimmedLine.substring(2, trimmedLine.length - 2)}</div>`;
+                                   } else if (trimmedLine.startsWith('### ')) {
+                                     return `<h4 class="font-semibold text-neutral-900 mt-3 mb-2 text-sm">${trimmedLine.substring(4)}</h4>`;
+                                   } else if (trimmedLine.startsWith('## ')) {
+                                     return `<h3 class="font-semibold text-neutral-900 mt-4 mb-3 text-base">${trimmedLine.substring(3)}</h3>`;
+                                   } else if (trimmedLine && !trimmedLine.startsWith('#')) {
+                                     const cleanText = trimmedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                                     return `<p class="mb-2">${cleanText}</p>`;
+                                   }
+                                   return '';
+                                 }).filter(item => item !== '').join('')}
                                </div>
                             </div>
                           </div>
